@@ -48,7 +48,7 @@ if (!isset($_SESSION['user_id']) || $_SESSION['role'] != 'admin') {
 
     
     <div class="d-flex align-items-center gap-2">
-        <button class="btn btn-outline-secondary" type="button" disabled>
+        <button class="btn btn-outline-black" type="button" disabled>
             <i class="bi bi-person-fill"></i> <?php echo $_SESSION['username']; ?>
         </button>
 
