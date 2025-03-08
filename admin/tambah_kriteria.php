@@ -38,7 +38,23 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         mysqli_stmt_bind_param($stmt, "sds", $nama_kriteria, $bobot, $tipe);
         
         if (mysqli_stmt_execute($stmt)) {
-            $_SESSION['pesan'] = "Kriteria berhasil ditambahkan!";
+            // Ambil ID kriteria yang baru saja dibuat
+            $id_kriteria_baru = mysqli_insert_id($koneksi);
+            
+            // Tambahkan kriteria baru ke semua sekolah yang sudah ada
+            // dengan nilai default 0
+            $query_sekolah = "SELECT id_sekolah FROM sekolah";
+            $result_sekolah = mysqli_query($koneksi, $query_sekolah);
+            
+            while ($sekolah = mysqli_fetch_assoc($result_sekolah)) {
+                $id_sekolah = $sekolah['id_sekolah'];
+                $query_penilaian = "INSERT INTO penilaian (id_sekolah, id_kriteria, nilai) VALUES (?, ?, 0)";
+                $stmt_penilaian = mysqli_prepare($koneksi, $query_penilaian);
+                mysqli_stmt_bind_param($stmt_penilaian, "ii", $id_sekolah, $id_kriteria_baru);
+                mysqli_stmt_execute($stmt_penilaian);
+            }
+            
+            $_SESSION['pesan'] = "Kriteria berhasil ditambahkan dan diaplikasikan ke semua sekolah!";
             header("Location: daftar_kriteria.php");
             exit();
         } else {
